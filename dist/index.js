@@ -56,6 +56,14 @@ app.post("/api/v1/content", middleware_1.userMiddleware, async (req, res) => {
         content
     });
 });
+app.get("/api/v1/content", middleware_1.userMiddleware, async (req, res) => {
+    const contents = await db_1.ContentModel.find({
+        userId: req.userId
+    }).populate("userId", "username");
+    res.json({
+        contents
+    });
+});
 app.listen(3000, () => {
     console.log("server running on port 3000");
 });

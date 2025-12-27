@@ -1,4 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
+import { ref } from "process";
 
 mongoose.connect("mongodb://127.0.0.1:27017/brainly")
   .then(() => console.log("DB connected"))
@@ -22,6 +23,11 @@ const ContentSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true 
+  },
+  authorId:{
+    type: mongoose.Types.ObjectId,
+    ref:"user",
+    required: true
   },
   tags: [{ type: String }]
 });

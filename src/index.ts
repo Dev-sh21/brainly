@@ -64,6 +64,27 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     content
   });
 });
+app.get("/api/v1/content", userMiddleware, async (req, res) => {
+  const contents = await ContentModel.find({
+    userId: req.userId
+  }).populate("userId","username")
+
+  res.json({
+    contents
+  });
+});
+
+app.delete("/api/v1/content",async(req,res)=>{
+  const contentId=req.body.contentId;
+  await ContentModel.deleteMany({
+    contentId,
+    //@ts-ignore
+    userId: req.userId
+  })
+  res.json({
+    message:"deleted"
+  })
+})
 
 app.listen(3000, () => {
   console.log("server running on port 3000");

@@ -53,6 +53,11 @@ const ContentSchema = new mongoose_1.Schema({
         ref: "User",
         required: true
     },
+    authorId: {
+        type: mongoose_1.default.Types.ObjectId,
+        ref: "user",
+        required: true
+    },
     tags: [{ type: String }]
 });
 exports.ContentModel = (0, mongoose_1.model)("Content", ContentSchema);
