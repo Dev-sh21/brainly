@@ -1,30 +1,30 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import { UserModel } from "./db";
+import { UserModel, ContentModel } from "./db";
+import { JWT_SECRET } from "./config";
+import { userMiddleware } from "./middleware";
 
 const app = express();
 app.use(express.json());
-
-const JWT_SECRET = "secret123";
 
 // signup
 app.post("/api/v1/signup", async (req, res) => {
   const { username, password } = req.body;
 
- try{ 
-   await UserModel.create({
-    username,
-    password
-  });
+  try {
+    await UserModel.create({
+      username,
+      password
+    });
 
-  res.json({
-    message: "user signed up"
-  })
-} catch(e){
-  res.status(411).json({
-    message:"user already exists"
-  })
-}
+    res.json({
+      message: "user signed up"
+    });
+  } catch (e) {
+    res.status(411).json({
+      message: "user already exists"
+    });
+  }
 });
 
 // signin
@@ -47,23 +47,22 @@ app.post("/api/v1/signin", async (req, res) => {
   res.json({ token });
 });
 
-// protected content
-app.get("/api/v1/content", (req, res) => {
-  const token = req.headers.authorization;
-  if (!token) {
-    res.status(401).json({ message: "no token" });
-    return;
-  }
+// create content (PROTECTED)
+app.post("/api/v1/content", userMiddleware, async (req, res) => {
+  const { link, type } = req.body;
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    res.json({
-      message: "your content",
-      user: decoded
-    });
-  } catch {
-    res.status(401).json({ message: "invalid token" });
-  }
+  const content = await ContentModel.create({
+    link,
+    type,
+    //@ts-ignore
+    userId: req.userId,
+    tags: []
+  });
+
+  res.json({
+    message: "content created",
+    content
+  });
 });
 
 app.listen(3000, () => {
