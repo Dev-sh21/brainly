@@ -15,7 +15,7 @@ const userMiddleware = (req, res, next) => {
     const token = authHeader.split(" ")[1];
     try {
         const decoded = jsonwebtoken_1.default.verify(token, config_1.JWT_SECRET);
-        req.userId = decoded.userId; // ✅ NOW TYPE SAFE
+        req.userId = decoded.userId;
         next();
     }
     catch {
